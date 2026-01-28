@@ -17,10 +17,10 @@
     <version.joda-time>2.14.0</version.joda-time>
     <version.uuid-generator>5.2.0</version.uuid-generator>
     <version.feel-scala>1.19.3</version.feel-scala>
-    <version.quarkus>3.30.6</version.quarkus>
+    <version.quarkus>3.30.8</version.quarkus>
     <version.java>17</version.java>
     <version.spring>6.2.15</version.spring>
-    <version.spring-boot>3.5.9</version.spring-boot>
+    <version.spring-boot>3.5.10</version.spring-boot>
     <version.liquibase>4.33.0</version.liquibase>
     <maven.compiler.release>17</maven.compiler.release>
     <sonar.organization>operaton</sonar.organization>
@@ -110,7 +110,7 @@
       <plugin>
         <groupId>org.openrewrite.maven</groupId>
         <artifactId>rewrite-maven-plugin</artifactId>
-        <version>6.28.0</version>
+        <version>6.28.1</version>
         <configuration>
           <activeRecipes>
             <recipe>org.operaton.recipe.CodeCleanup</recipe>

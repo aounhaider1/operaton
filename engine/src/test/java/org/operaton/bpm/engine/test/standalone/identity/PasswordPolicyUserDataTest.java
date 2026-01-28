@@ -16,7 +16,6 @@
  */
 package org.operaton.bpm.engine.test.standalone.identity;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +35,7 @@ import org.operaton.bpm.engine.impl.identity.PasswordPolicyUserDataRuleImpl;
 import org.operaton.bpm.engine.test.junit5.ProcessEngineExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 @ExtendWith(ProcessEngineExtension.class)
 public class PasswordPolicyUserDataTest {
@@ -132,13 +131,8 @@ public class PasswordPolicyUserDataTest {
       if (methodName.startsWith("set") && !"setPassword".equals(methodName)) {
         User user = identityService.newUser("");
 
-        try {
-          method.invoke(user, attrValue);
-
-        } catch (IllegalAccessException | InvocationTargetException e) {
-          fail(e.getMessage());
-
-        }
+        assertThatCode(() -> method.invoke(user, attrValue))
+            .doesNotThrowAnyException();
 
         PasswordPolicyResult passwordPolicyResult =
             identityService.checkPasswordAgainstPolicy(CANDIDATE_PASSWORD, user);
@@ -151,31 +145,21 @@ public class PasswordPolicyUserDataTest {
   }
 
   protected void assertRuleViolated(Map<String, PasswordPolicyResult> results) {
-    results.forEach((methodName, result) -> {
-      try {
+    results.forEach((methodName, result) ->
         assertThat(result.getViolatedRules())
+            .withFailMessage("Rule not violated with %s", methodName)
             .extracting("placeholder")
-            .contains(PasswordPolicyUserDataRuleImpl.PLACEHOLDER);
-
-      } catch (AssertionError e) {
-        fail("Rule not violated with %s:%s".formatted(methodName, e.getMessage()));
-
-      }
-    });
+            .contains(PasswordPolicyUserDataRuleImpl.PLACEHOLDER)
+    );
   }
 
   protected void assertRuleFulfilled(Map<String, PasswordPolicyResult> results) {
-    results.forEach((methodName, result) -> {
-      try {
+    results.forEach((methodName, result) ->
         assertThat(result.getFulfilledRules())
+            .withFailMessage("Rule not fulfilled with %s", methodName)
             .extracting("placeholder")
-            .contains(PasswordPolicyUserDataRuleImpl.PLACEHOLDER);
-
-      } catch (AssertionError e) {
-        fail("Rule not fulfilled with %s:%s".formatted(methodName, e.getMessage()));
-
-      }
-    });
+            .contains(PasswordPolicyUserDataRuleImpl.PLACEHOLDER)
+    );
   }
 
 }

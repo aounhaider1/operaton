@@ -2801,22 +2801,18 @@ class TaskServiceTest {
     // this works
     VariableMap variablesTyped = taskService.getVariablesTyped(taskId, false);
     assertThat(variablesTyped.<ObjectValue>getValueTyped("broken")).isNotNull();
-    variablesTyped = taskService.getVariablesTyped(taskId, List.of("broken"), false);
+    List<String> variableNames = List.of("broken");
+    variablesTyped = taskService.getVariablesTyped(taskId, variableNames, false);
     assertThat(variablesTyped.<ObjectValue>getValueTyped("broken")).isNotNull();
 
-    // this does not
-    try {
-      taskService.getVariablesTyped(taskId);
-    } catch(ProcessEngineException e) {
-      testRule.assertTextPresent("Cannot deserialize object", e.getMessage());
-    }
+    // when/then - this does not work (deserialization fails)
+    assertThatThrownBy(() -> taskService.getVariablesTyped(taskId))
+      .isInstanceOf(ProcessEngineException.class)
+      .hasMessageContaining("Cannot deserialize object");
 
-    // this does not
-    try {
-      taskService.getVariablesTyped(taskId, List.of("broken"), true);
-    } catch(ProcessEngineException e) {
-      testRule.assertTextPresent("Cannot deserialize object", e.getMessage());
-    }
+    assertThatThrownBy(() -> taskService.getVariablesTyped(taskId, variableNames, true))
+      .isInstanceOf(ProcessEngineException.class)
+      .hasMessageContaining("Cannot deserialize object");
   }
 
   @Deployment(resources = {
@@ -2849,22 +2845,18 @@ class TaskServiceTest {
     // this works
     VariableMap variablesTyped = taskService.getVariablesLocalTyped(taskId, false);
     assertThat(variablesTyped.<ObjectValue>getValueTyped("broken")).isNotNull();
-    variablesTyped = taskService.getVariablesLocalTyped(taskId, List.of("broken"), false);
+    List<String> variableNames = List.of("broken");
+    variablesTyped = taskService.getVariablesLocalTyped(taskId, variableNames, false);
     assertThat(variablesTyped.<ObjectValue>getValueTyped("broken")).isNotNull();
 
-    // this does not
-    try {
-      taskService.getVariablesLocalTyped(taskId);
-    } catch(ProcessEngineException e) {
-      testRule.assertTextPresent("Cannot deserialize object", e.getMessage());
-    }
+    // when/then - this does not work (deserialization fails)
+    assertThatThrownBy(() -> taskService.getVariablesLocalTyped(taskId))
+      .isInstanceOf(ProcessEngineException.class)
+      .hasMessageContaining("Cannot deserialize object");
 
-    // this does not
-    try {
-      taskService.getVariablesLocalTyped(taskId, List.of("broken"), true);
-    } catch(ProcessEngineException e) {
-      testRule.assertTextPresent("Cannot deserialize object", e.getMessage());
-    }
+    assertThatThrownBy(() -> taskService.getVariablesLocalTyped(taskId, variableNames, true))
+      .isInstanceOf(ProcessEngineException.class)
+      .hasMessageContaining("Cannot deserialize object");
 
   }
 
